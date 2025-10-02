@@ -10,7 +10,7 @@ import {
 import { useAppDispatch, useAppSelector } from '../../../state';
 import { exampleActions } from '../state';
 import { memo } from 'react';
-import { useCurrentUserLazyQuery } from '../../../generated/graphql';
+import { useCurrentUserLazyQuery, useAllMoviesLazyQuery } from '../../../generated/graphql';
 import { FetchButton } from '../components/FetchButton';
 
 const primary = '#1976d2';
@@ -22,6 +22,10 @@ const Example = () => {
   const [fetchUser, { data, loading }] = useCurrentUserLazyQuery({
     fetchPolicy: 'network-only',
   });
+  const [fetchMovies, { data: dataMovies, loading: loadingMovies }] =
+    useAllMoviesLazyQuery({
+      fetchPolicy: 'network-only',
+    });
   return (
     <div css={styles.root}>
       <Paper elevation={3} css={styles.navBar}>
@@ -86,6 +90,21 @@ const Example = () => {
               multiline
               label={'User Data from GraphQL using Apollo Hooks'}
               defaultValue={JSON.stringify(data)}
+            />
+          </Zoom>
+          
+
+          <FetchButton
+            onClick={() => fetchMovies()}
+            label={'Fetch Movies using Apollo Hooks'}
+            disabled={loadingMovies}
+          />
+          <Zoom in={Boolean(dataMovies)} unmountOnExit mountOnEnter>
+            <TextField
+              css={styles.dataInput}
+              multiline
+              label={'Movies Data from GraphQL using Apollo Hooks'}
+              defaultValue={JSON.stringify(dataMovies)}
             />
           </Zoom>
         </div>

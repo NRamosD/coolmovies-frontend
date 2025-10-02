@@ -1,0 +1,23 @@
+# Listado de películas con opciones típicas de PostGraphile (ajusta si tu esquema difiere)
+query Movies(
+  $first: Int
+  $offset: Int
+  $orderBy: [MoviesOrderBy!]
+  $filter: MovieFilter
+) {
+  allMovies(first: $first, offset: $offset, orderBy: $orderBy, filter: $filter) {
+    totalCount
+    nodes {
+      id
+      title
+    }
+  }
+}
+
+# Película por ID (UUID)
+query MovieById($id: UUID!) {
+  movieById(id: $id) {
+    id
+    title
+  }
+}
