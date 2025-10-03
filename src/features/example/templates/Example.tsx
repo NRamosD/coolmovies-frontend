@@ -10,7 +10,7 @@ import {
 import { useAppDispatch, useAppSelector } from '../../../state';
 import { exampleActions } from '../state';
 import { memo } from 'react';
-import { useCurrentUserLazyQuery, useAllMoviesLazyQuery } from '../../../generated/graphql';
+import { useCurrentUserLazyQuery, useAllMoviesLazyQuery, useMovieLazyQuery } from '../../../generated/graphql';
 import { FetchButton } from '../components/FetchButton';
 
 const primary = '#1976d2';
@@ -24,6 +24,11 @@ const Example = () => {
   });
   const [fetchMovies, { data: dataMovies, loading: loadingMovies }] =
     useAllMoviesLazyQuery({
+      fetchPolicy: 'network-only',
+    });
+
+  const [fetchMovieReview, { data: dataMovieReview, loading: loadingMovieReview }] =
+    useMovieLazyQuery({
       fetchPolicy: 'network-only',
     });
   return (
@@ -95,16 +100,20 @@ const Example = () => {
           
 
           <FetchButton
-            onClick={() => fetchMovies()}
-            label={'Fetch Movies using Apollo Hooks'}
-            disabled={loadingMovies}
+            onClick={() => fetchMovieReview({
+              variables: {
+                nodeId: "WyJtb3ZpZXMiLCI3MDM1MTI4OS04NzU2LTQxMDEtYmY5YS0zN2ZjOGM3YTgyY2QiXQ==",
+              },
+            })}
+            label={'Fetch Movie Review using Apollo Hooks'}
+            disabled={loadingMovieReview}
           />
-          <Zoom in={Boolean(dataMovies)} unmountOnExit mountOnEnter>
+          <Zoom in={Boolean(dataMovieReview)} unmountOnExit mountOnEnter>
             <TextField
               css={styles.dataInput}
               multiline
               label={'Movies Data from GraphQL using Apollo Hooks'}
-              defaultValue={JSON.stringify(dataMovies)}
+              defaultValue={JSON.stringify(dataMovieReview)}
             />
           </Zoom>
         </div>

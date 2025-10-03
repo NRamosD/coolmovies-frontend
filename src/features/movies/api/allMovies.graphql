@@ -1,0 +1,14 @@
+query AllMovies {
+    allMovies {
+        totalCount
+        nodes {
+            nodeId
+            id
+            title
+            movieDirectorId
+            userCreatorId
+            releaseDate
+            imgUrl
+        }
+    }
+}

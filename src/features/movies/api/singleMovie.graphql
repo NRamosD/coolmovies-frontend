@@ -1,0 +1,20 @@
+query Movie($nodeId: ID!) {
+    movie(nodeId: $nodeId) {
+        title
+        nodeId
+        id
+        movieReviewsByMovieId {
+            totalCount
+            nodes {
+                nodeId
+                id
+                title
+                body
+                rating
+                movieId
+                userReviewerId
+            }
+        }
+
+    }
+}
