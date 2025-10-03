@@ -10,7 +10,7 @@ import {
 import { useAppDispatch, useAppSelector } from '../../../state';
 import { exampleActions } from '../state';
 import { memo } from 'react';
-import { useCurrentUserLazyQuery, useAllMoviesLazyQuery, useMovieLazyQuery } from '../../../generated/graphql';
+import { useCurrentUserLazyQuery, useAllMoviesLazyQuery, useMovieLazyQuery, useCreateMovieReviewMutation } from '../../../generated/graphql';
 import { FetchButton } from '../components/FetchButton';
 
 const primary = '#1976d2';
@@ -30,7 +30,36 @@ const Example = () => {
   const [fetchMovieReview, { data: dataMovieReview, loading: loadingMovieReview }] =
     useMovieLazyQuery({
       fetchPolicy: 'network-only',
+      nextFetchPolicy: "no-cache"
     });
+
+  const [createMovieReview, { data: dataCreateMovieReview, loading: loadingCreateMovieReview, error: errorCreateMovieReview }] = useCreateMovieReviewMutation();
+
+
+
+  const handleCreateReview = async () => {
+    try {
+      const response = await createMovieReview({
+        variables: {
+          input: {
+            movieReview: {
+              title: "Excelente película",
+              body: "Me encantó la historia y los efectos visuales",
+              rating: 5,
+              movieId: "uuid-de-la-pelicula",
+              userReviewerId: "uuid-del-usuario"
+            },
+            clientMutationId: "12345"
+          }
+        }
+      });
+
+      console.log("Review creada:", response.data?.createMovieReview?.movieReview);
+    } catch (err) {
+      console.error("Error creando la review:", err);
+    }
+  };
+
   return (
     <div css={styles.root}>
       <Paper elevation={3} css={styles.navBar}>
@@ -113,9 +142,33 @@ const Example = () => {
               css={styles.dataInput}
               multiline
               label={'Movies Data from GraphQL using Apollo Hooks'}
-              defaultValue={JSON.stringify(dataMovieReview)}
+              value={JSON.stringify(dataMovieReview)}
+              disabled
             />
           </Zoom>
+
+
+          <FetchButton
+            onClick={() => createMovieReview({
+              variables: {
+                input: {
+                  movieReview: {
+                    title: "Excelente película, peeero...",
+                    body: "Me gustó mucho la historia y los efectos visuales, pero hubo ciertos problemas con la reproducción.",
+                    rating: 4,
+                    movieId: "70351289-8756-4101-bf9a-37fc8c7a82cd",
+                    userReviewerId: "7b4c31df-04b3-452f-a9ee-e9f8836013cc"
+                  },
+                  clientMutationId: "123456"
+                }
+              },
+            })}
+            label={'Mutation Movie Review using Apollo Hooks'}
+            disabled={loadingMovieReview}
+          />
+
+
+
         </div>
       </div>
     </div>
