@@ -1,0 +1,1 @@
+export { default as ReviewsTemplate } from './templates/ReviewsTemplate';

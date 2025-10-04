@@ -12,10 +12,12 @@ import { exampleActions } from '../state';
 import { memo } from 'react';
 import { useCurrentUserLazyQuery, useAllMoviesLazyQuery, useMovieLazyQuery, useCreateMovieReviewMutation } from '../../../generated/graphql';
 import { FetchButton } from '../components/FetchButton';
+import { useRouter } from 'next/navigation';
 
 const primary = '#1976d2';
 
 const Example = () => {
+  const router = useRouter();
   const dispatch = useAppDispatch();
   const exampleState = useAppSelector((state) => state.example);
 
@@ -164,6 +166,12 @@ const Example = () => {
               },
             })}
             label={'Mutation Movie Review using Apollo Hooks'}
+            disabled={loadingMovieReview}
+          />
+          
+          <FetchButton
+            onClick={() => router.push('/reviews')}
+            label={'Go to Reviews'}
             disabled={loadingMovieReview}
           />
 
