@@ -1,6 +1,7 @@
 import { css } from "@emotion/react";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import {
+  CircularProgress,
   Grid2,
   IconButton,
   Paper,
@@ -8,13 +9,29 @@ import {
 } from "@mui/material";
 
 import { memo } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import MovieComponent from "../components/MovieComponent";
+import MovieModalReviews from "../components/MovieModalReviews";
+import { useReviewsHook } from "../hooks/useReviewsHook";
 
 const primary = "#E50914";
 
 const ReviewsTemplate = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const movieId = searchParams.get("id");
+  const {
+    dataMovies,
+    loadingMovies,
+    handleOpen,
+    handleClose,
+  } = useReviewsHook({
+    enableFetchMovies: true,
+  });
+  console.log(dataMovies)
+
+
+
   return (
     <div css={styles.root}>
         <Paper elevation={3} css={styles.navBar}>
@@ -32,26 +49,40 @@ const ReviewsTemplate = () => {
         </Grid2>
         <Grid2 size={12} container spacing={2}
         paddingY={1} paddingX={2} sx={{ width: "100%", height: "100%" }}>
-          <Grid2 size={12} container spacing={2} justifyContent="center"
-          paddingY={2} paddingX={2}>
-            <Grid2
-              size={8}
-              container
-              spacing={2}
-              padding={2}
-              overflow="auto"
-              justifyContent="center"
-              height={500}
-              sx={styles.contentScroll}
-            >
-              {
-                Array.from({ length: 10 }).map((_, index) => (
-                  <MovieComponent key={index} id="" title="" />
-                ))
-              }
+          {
+            loadingMovies ? (
+              <CircularProgress color="primary" />
+            ) : (
+            <Grid2 size={12} container spacing={2} justifyContent="center"
+            paddingY={2} paddingX={2}>
+              <Grid2
+                size={8}
+                container
+                spacing={2}
+                padding={2}
+                overflow="auto"
+                justifyContent="center"
+                height={500}
+                sx={styles.contentScroll}
+              >
+                {
+                  dataMovies?.allMovies?.nodes?.map((movie:any) => (
+                    <MovieComponent key={movie?.id} movie={movie} 
+                    onClick={() => {
+                      handleOpen(movie?.id);
+                    }} />
+                  ))
+                }
+              </Grid2>
             </Grid2>
-          </Grid2>
+            )
+          }
         </Grid2>
+        <MovieModalReviews
+          open={Boolean(movieId)}
+          onClose={handleClose}
+          movie={movieId ? { id: movieId, title: "una pelicula" } : undefined}
+        />
     </div>
   );
 };

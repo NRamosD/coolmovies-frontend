@@ -4,7 +4,17 @@ import { useRouter } from "next/navigation";
 import { Modal, Box, Typography, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
-export default function MovieModalReviews({ params }: { params: { id: string } }) {
+type MovieModalReviewsProps = {
+  open: boolean;
+  onClose: () => void;
+  movie: any;
+}
+
+const MovieModalReviews = ({
+  open,
+  onClose,
+  movie,
+}: MovieModalReviewsProps) => {
   const router = useRouter();
 
   const handleClose = () => {
@@ -13,8 +23,8 @@ export default function MovieModalReviews({ params }: { params: { id: string } }
 
   return (
     <Modal
-      open
-      onClose={handleClose}
+      open={open}
+      onClose={onClose}
       aria-labelledby="movie-modal-title"
       aria-describedby="movie-modal-description"
     >
@@ -29,7 +39,7 @@ export default function MovieModalReviews({ params }: { params: { id: string } }
           boxShadow: 24,
           p: 4,
           borderRadius: 2,
-          width: 400,
+          width: "80%",
         }}
       >
         <IconButton
@@ -40,7 +50,7 @@ export default function MovieModalReviews({ params }: { params: { id: string } }
         </IconButton>
 
         <Typography id="movie-modal-title" variant="h6" component="h2">
-          Película #{params.id}
+          Película #{movie?.id||2}
         </Typography>
         <Typography id="movie-modal-description" sx={{ mt: 2 }}>
           Aquí van los detalles de la película...
@@ -49,3 +59,5 @@ export default function MovieModalReviews({ params }: { params: { id: string } }
     </Modal>
   );
 }
+
+export default MovieModalReviews;

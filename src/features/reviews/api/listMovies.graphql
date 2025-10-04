@@ -1,0 +1,18 @@
+query listMovies {
+    allMovies {
+        totalCount
+        nodes {
+            nodeId
+            id
+            title
+            releaseDate
+            imgUrl
+            movieReviewsByMovieId {
+                totalCount
+                nodes {
+                    rating
+                }
+            }
+        }
+    }
+}

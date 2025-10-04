@@ -11,69 +11,46 @@ import {
   Stack,
 } from '@mui/material'
 import type { SxProps, Theme } from '@mui/material/styles'
-import Link from 'next/link'
+import type { MovieNode } from '../../../interfaces/movies.interface'
 
 type Props = {
-  id: string
-  title: string
-  imgUrl?: string | null
-  releaseDate?: string | null
-  movieDirectorId?: string | null
-  userCreatorId?: string | null
-  description?: string
-  rating?: number // 0-5 scale
+  movie: MovieNode,
   onClick?: (id: string) => void
   sx?: SxProps<Theme>
 }
 
 const FALLBACK_POSTER = 'https://via.placeholder.com/300x450?text=No+Image'
 
-const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max)
-
 const MovieComponent: React.FC<Props> = ({
-  id,
-  title,
-  imgUrl,
-  releaseDate,
-  movieDirectorId,
-  userCreatorId,
-  description,
-  rating,
+  movie,
   onClick,
   sx,
 }) => {
-  const year = releaseDate ? new Date(releaseDate).getFullYear() : undefined
-  const autoDescriptionParts: string[] = []
-  if (year) autoDescriptionParts.push(`${year}`)
-  if (movieDirectorId) autoDescriptionParts.push(`Dir: ${movieDirectorId}`)
-  if (userCreatorId) autoDescriptionParts.push(`By: ${userCreatorId}`)
-  const autoDescription = autoDescriptionParts.join(' • ')
+  const year = movie?.releaseDate ? new Date(movie?.releaseDate).getFullYear() : undefined
 
-  const displayDescription = description ?? autoDescription
-  const displayImg = imgUrl || FALLBACK_POSTER
-  const normalizedRating = rating != null ? clamp(rating, 0, 5) : undefined
+  const displayImg = movie?.imgUrl || FALLBACK_POSTER
+  const normalizedRating = movie?.movieReviewsByMovieId != null ? 
+    movie?.movieReviewsByMovieId?.nodes?.reduce((acc, review) => acc + (review?.rating||0), 0) / movie?.movieReviewsByMovieId?.totalCount : 0
 
+    console.log(normalizedRating)
   return (
-    <Link key={id} href={`/movies/${id}`} style={{ textDecoration: "none" }}>
-    <Card sx={{ maxWidth: "fit-content", ...sx }}>
-      <CardActionArea onClick={() => onClick?.(id)}>
+      <CardActionArea sx={{ maxWidth: 250, ...sx }} onClick={() => onClick?.(movie?.id)}>
+    <Card>
         <CardMedia
           component="img"
-          height="300"
+          height={350}
           image={displayImg}
-          alt={`${title} poster`}
+          alt={`${movie?.title} poster`}
           sx={{ objectFit: 'cover' }}
         />
         <CardContent>
           <Stack spacing={1}>
-            <Typography variant="h6" noWrap title={title}>
-              {title}
+            <Typography variant="h6" noWrap title={movie?.title}>
+              {movie?.title}
             </Typography>
-            {displayDescription && (
-              <Typography variant="body2" color="text.secondary" noWrap title={displayDescription}>
-                {displayDescription}
-              </Typography>
-            )}
+            <Typography variant="caption" color="text.secondary" noWrap title={movie?.releaseDate}>
+              {year}
+            </Typography>
             <Box display="flex" alignItems="center" gap={1}>
               <Rating value={normalizedRating ?? 0} precision={0.5} readOnly size="small" />
               <Typography variant="caption" color="text.secondary">
@@ -82,9 +59,8 @@ const MovieComponent: React.FC<Props> = ({
             </Box>
           </Stack>
         </CardContent>
-      </CardActionArea>
     </Card>
-    </Link>
+      </CardActionArea>
   )
 }
 
